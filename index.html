@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-title" content="GSD Calc">
     
     <link rel="apple-touch-icon" href="icon.png">
-    
+
     <style>
         /* iPhoneのノッチ(上の切り欠き)対応 */
         body { 
@@ -69,7 +69,7 @@
 <body>
 
 <div class="container">
-    <h2>GSD & ブラー計算機 App</h2>
+    <h2>GSD計算機</h2>
 
     <div class="mode-switch">
         <div class="mode-option active" id="modeNormal" onclick="setMode('normal')">GSDを出す<br><small>(距離 → GSD)</small></div>
@@ -134,7 +134,7 @@
     <input type="number" id="hfov" value="73.7" step="0.1" inputmode="decimal">
 
     <div class="opt-section">
-        <div class="opt-title">🏃‍♂️ モーションブラー (任意入力)</div>
+        <div class="opt-title">モーションブラー</div>
         <div style="display:flex; gap:10px;">
             <div style="flex:1;">
                 <label>飛行速度 (m/s)</label>
@@ -165,7 +165,7 @@
     </div>
 
     <details>
-        <summary>⚙️ 新しい機材・レンズを登録する</summary>
+        <summary>新しい機材・レンズを登録する</summary>
         <div style="background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 10px;">
             <label>登録名 (例: My Drone 24mm)</label>
             <input type="text" id="new_name" placeholder="名称を入力">
@@ -348,7 +348,7 @@
                 viewW = 2 * dist * Math.tan(rad / 2);
                 gsdVal = (viewW * 1000) / pw;
                 resultVal = gsdVal;
-                resultLabelText = "GSD (地上画素寸法)";
+                resultLabelText = "GSD";
                 resultUnit = " mm/px";
                 document.getElementById('resMain').innerText = resultVal.toFixed(2) + resultUnit;
             }
@@ -358,7 +358,7 @@
                 resultVal = (targetGsd * pw) / (2000 * Math.tan(rad / 2));
                 viewW = 2 * resultVal * Math.tan(rad / 2);
                 gsdVal = targetGsd; 
-                resultLabelText = "必要な対地高度";
+                resultLabelText = "必要な距離";
                 resultUnit = " m";
                 document.getElementById('resMain').innerText = resultVal.toFixed(1) + resultUnit;
             }
