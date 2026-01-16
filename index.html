@@ -8,18 +8,16 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="GSD Calc">
-    
     <link rel="apple-touch-icon" href="icon.png">
 
     <style>
-        /* iPhoneのノッチ(上の切り欠き)対応 */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif; 
             background: #f2f2f7; 
             margin: 0; 
-            padding: env(safe-area-inset-top) 15px 20px 15px; /* 上部に余白を作る */
+            padding: env(safe-area-inset-top) 15px 20px 15px; 
             color: #1c1c1e; 
-            -webkit-tap-highlight-color: transparent; /* タップ時のグレー背景を消す */
+            -webkit-tap-highlight-color: transparent; 
         }
         .container { max-width: 100%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         h2 { text-align: center; margin: 0 0 15px 0; font-size: 1.2rem; color: #1c1c1e; }
@@ -36,7 +34,9 @@
             background: #f2f2f7; appearance: none;
         }
         select { font-weight: 500; color: #333; }
-        input:disabled { background: #e5e5ea; color: #aaa; border-color: #e5e5ea; }
+        
+        /* ロックされた入力欄のデザイン */
+        input:disabled { background: #e5e5ea; color: #888; border-color: #eee; cursor: not-allowed; }
         input:focus, select:focus { border-color: #007aff; background: #fff; outline: none; }
         
         .opt-section { background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
@@ -76,44 +76,44 @@
         <div class="mode-option" id="modeReverse" onclick="setMode('reverse')">距離を出す<br><small>(GSD → 距離)</small></div>
     </div>
 
-    <label>機種を選択</label>
+    <label>機種・レンズを選択</label>
     <select id="droneSelect" onchange="updateDrone()">
-        <option value="manual">-- 手動入力 --</option>
+        <option value="manual">-- 手動入力 (Manual) --</option>
         <optgroup label="ユーザー登録機材" id="userGroup" style="display:none;"></optgroup>
 
         <optgroup label="DJI Zenmuse Payloads">
             <option value="p1_24mm">Zenmuse P1 (24mm)</option>
             <option value="p1_35mm">Zenmuse P1 (35mm)</option>
-            <option value="l2_rgb">Zenmuse L2 (RGB Camera)</option>
-            <option value="h20_wide">Zenmuse H20 (Wide)</option>
+            <option value="l2_rgb">Zenmuse L2 RGB (24mm eq)</option>
+            <option value="h20_wide">Zenmuse H20 Wide (24mm eq)</option>
         </optgroup>
 
         <optgroup label="Phase One">
-            <option value="ixm100_80mm">iXM 100MP (80mm Lens)</option>
+            <option value="ixm100_80mm">iXM 100MP (80mm)</option>
         </optgroup>
 
         <optgroup label="DJI Matrice 4 Series">
-            <option value="m4t_wide">Matrice 4T (Wide)</option>
-            <option value="m4t_med">Matrice 4T (Med 70mm)</option>
-            <option value="m4t_tele">Matrice 4T (Tele 168mm)</option>
-            <option value="m4d_wide">Matrice 4D (Wide 4/3 CMOS)</option>
+            <option value="m4t_wide">Matrice 4T Wide (24mm eq)</option>
+            <option value="m4t_med">Matrice 4T Med (70mm eq)</option>
+            <option value="m4t_tele">Matrice 4T Tele (168mm eq)</option>
+            <option value="m4d_wide">Matrice 4D Wide (24mm eq)</option>
         </optgroup>
 
         <optgroup label="DJI Matrice 30 Series">
-            <option value="m30_wide">Matrice 30 / 30T (Wide)</option>
-            <option value="m30_zoom">Matrice 30 / 30T (Zoom)</option>
+            <option value="m30_wide">Matrice 30/30T Wide (24mm eq)</option>
+            <option value="m30_zoom">Matrice 30/30T Zoom (～113mm)</option>
         </optgroup>
 
         <optgroup label="DJI Mavic 3 Series">
-            <option value="m3_classic">Mavic 3 Classic</option>
-            <option value="m3_pro">Mavic 3 / 3 Pro (Main)</option>
-            <option value="m3e_wide">Mavic 3 Enterprise (Wide)</option>
+            <option value="m3_classic">Mavic 3 Classic (24mm eq)</option>
+            <option value="m3_pro">Mavic 3 / 3 Pro (24mm eq)</option>
+            <option value="m3e_wide">Mavic 3 Enterprise (24mm eq)</option>
         </optgroup>
 
         <optgroup label="DJI Mavic 2 Series">
-            <option value="m2_pro">Mavic 2 Pro</option>
-            <option value="m2_zoom">Mavic 2 Zoom (24mm)</option>
-            <option value="m2_ent">Mavic 2 Enterprise (Visual)</option>
+            <option value="m2_pro">Mavic 2 Pro (28mm eq)</option>
+            <option value="m2_zoom">Mavic 2 Zoom (24mm eq)</option>
+            <option value="m2_ent">Mavic 2 Enterprise (24mm eq)</option>
         </optgroup>
     </select>
     
@@ -130,11 +130,11 @@
         </div>
     </div>
     
-    <label>水平画角 H-FOV (°)</label>
+    <label>水平画角 H-FOV (°) <small style="font-weight:normal;">※プリセット時ロック</small></label>
     <input type="number" id="hfov" value="73.7" step="0.1" inputmode="decimal">
 
     <div class="opt-section">
-        <div class="opt-title">モーションブラー</div>
+        <div class="opt-title">🏃‍♂️ モーションブラー (任意入力)</div>
         <div style="display:flex; gap:10px;">
             <div style="flex:1;">
                 <label>飛行速度 (m/s)</label>
@@ -157,7 +157,7 @@
 
     <div class="result-box" id="resultArea" style="display:none;">
         <div class="result-main">
-            <span class="label" id="resLabel">GSD (地上画素寸法)</span>
+            <span class="label" id="resLabel">GSD</span>
             <span class="val" id="resMain">--</span>
         </div>
         <div class="result-sub" id="resSub">撮影範囲: --</div>
@@ -195,24 +195,33 @@
 </div>
 
 <script>
+    // ==========================================
+    // データセット (名称にミリ数を追記)
+    // ==========================================
     const defaultData = {
         "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.7 },
         "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.4 },
-        "h20_wide": { name: "Zenmuse H20 (Wide)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
-        "l2_rgb":   { name: "Zenmuse L2 (RGB)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        
+        "h20_wide": { name: "Zenmuse H20 Wide (24mm eq)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
+        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+
         "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 44.0, sh: 33.0, pw: 11664, fov: 30.7 },
-        "m4t_wide": { name: "Matrice 4T (Wide)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
-        "m4t_med":  { name: "Matrice 4T (Med)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 },
-        "m4t_tele": { name: "Matrice 4T (Tele)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
-        "m4d_wide": { name: "Matrice 4D (Wide)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m30_wide": { name: "Matrice 30/30T (Wide)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
-        "m30_zoom": { name: "Matrice 30/30T (Zoom)", sw: 6.4, sh: 4.8, pw: 8000, fov: 35 },
-        "m3_classic": { name: "Mavic 3 Classic", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3_pro":     { name: "Mavic 3 / 3 Pro", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3e_wide":   { name: "Mavic 3 Enterprise",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m2_pro":  { name: "Mavic 2 Pro",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
-        "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
-        "m2_ent":  { name: "Mavic 2 Enterprise",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
+
+        "m4t_wide": { name: "Matrice 4T Wide (24mm eq)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
+        "m4t_med":  { name: "Matrice 4T Med (70mm eq)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 },
+        "m4t_tele": { name: "Matrice 4T Tele (168mm eq)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
+        "m4d_wide": { name: "Matrice 4D Wide (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+
+        "m30_wide": { name: "Matrice 30/30T Wide (24mm eq)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
+        "m30_zoom": { name: "Matrice 30/30T Zoom (～113mm)", sw: 6.4, sh: 4.8, pw: 8000, fov: 35 }, 
+
+        "m3_classic": { name: "Mavic 3 Classic (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m3e_wide":   { name: "Mavic 3 Enterprise (24mm eq)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+
+        "m2_pro":  { name: "Mavic 2 Pro (28mm eq)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
+        "m2_zoom": { name: "Mavic 2 Zoom (24mm eq)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
+        "m2_ent":  { name: "Mavic 2 Enterprise (24mm eq)",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
     };
 
     let allDroneData = {};
@@ -297,7 +306,7 @@
         if (mode === 'normal') {
             btnNormal.classList.add('active');
             btnReverse.classList.remove('active');
-            distInput.disabled = false;
+            if (currentMode === 'normal') distInput.disabled = false;
             gsdInput.disabled = true;
             distInput.style.backgroundColor = "#fff";
             gsdInput.style.backgroundColor = "#e5e5ea";
@@ -310,17 +319,40 @@
             gsdInput.style.backgroundColor = "#fff";
         }
         document.getElementById('resultArea').style.display = 'none';
+        
+        // モード切替時にロック状態も再評価
+        updateDrone();
     }
 
     function updateDrone() {
         const key = document.getElementById('droneSelect').value;
         const deleteBtn = document.getElementById('btnDelete');
+        
+        // --- 入力ロック機能 ---
+        const isManual = (key === 'manual');
+        const fovInput = document.getElementById('hfov');
+        const distInput = document.getElementById('distance');
+
+        // FOV等は、Manual以外では常にロック（編集不可）
+        fovInput.disabled = !isManual;
+
+        // 距離入力は、プリセットモードに関係なく、「距離を出すモード」の時はロックされる
+        // （setMode関数で制御しているのでここでは触らないが、背景色の整合性をとる）
+        if (!isManual) {
+            fovInput.style.backgroundColor = "#e5e5ea"; // グレーアウト
+        } else {
+            fovInput.style.backgroundColor = "#fff";
+        }
+
+        // --- カスタム削除ボタン制御 ---
         if (key.startsWith("custom_")) {
             deleteBtn.style.display = "block";
         } else {
             deleteBtn.style.display = "none";
         }
-        if (key === "manual") return;
+
+        if (isManual) return; // マニュアルなら値の上書きはしない
+
         const d = allDroneData[key];
         document.getElementById('hfov').value = d.fov;
         document.getElementById('sensor_w').value = d.sw;
@@ -358,7 +390,7 @@
                 resultVal = (targetGsd * pw) / (2000 * Math.tan(rad / 2));
                 viewW = 2 * resultVal * Math.tan(rad / 2);
                 gsdVal = targetGsd; 
-                resultLabelText = "必要な距離";
+                resultLabelText = "必要な撮影距離";
                 resultUnit = " m";
                 document.getElementById('resMain').innerText = resultVal.toFixed(1) + resultUnit;
             }
