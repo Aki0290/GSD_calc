@@ -35,7 +35,6 @@
         }
         select { font-weight: 500; color: #333; }
         
-        /* ロックされた入力欄のデザイン */
         input:disabled { background: #e5e5ea; color: #888; border-color: #eee; cursor: not-allowed; }
         input:focus, select:focus { border-color: #007aff; background: #fff; outline: none; }
         
@@ -202,26 +201,26 @@
         "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.7 },
         "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.4 },
         
-        "h20_wide": { name: "Zenmuse H20 Wide (24mm eq)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
-        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "h20_wide": { name: "Zenmuse H20 Wide (24mm)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
+        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
 
         "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 44.0, sh: 33.0, pw: 11664, fov: 30.7 },
 
-        "m4t_wide": { name: "Matrice 4T Wide (24mm eq)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
-        "m4t_med":  { name: "Matrice 4T Med (70mm eq)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 },
-        "m4t_tele": { name: "Matrice 4T Tele (168mm eq)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
-        "m4d_wide": { name: "Matrice 4D Wide (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
+        "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 },
+        "m4t_tele": { name: "Matrice 4T Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
+        "m4d_wide": { name: "Matrice 4D Wide (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
 
-        "m30_wide": { name: "Matrice 30/30T Wide (24mm eq)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
+        "m30_wide": { name: "Matrice 30/30T Wide (24mm)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
         "m30_zoom": { name: "Matrice 30/30T Zoom (～113mm)", sw: 6.4, sh: 4.8, pw: 8000, fov: 35 }, 
 
-        "m3_classic": { name: "Mavic 3 Classic (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm eq)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3e_wide":   { name: "Mavic 3 Enterprise (24mm eq)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m3_classic": { name: "Mavic 3 Classic (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "m3e_wide":   { name: "Mavic 3 Enterprise (24mm)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
 
-        "m2_pro":  { name: "Mavic 2 Pro (28mm eq)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
-        "m2_zoom": { name: "Mavic 2 Zoom (24mm eq)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
-        "m2_ent":  { name: "Mavic 2 Enterprise (24mm eq)",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
+        "m2_pro":  { name: "Mavic 2 Pro (28mm)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
+        "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
+        "m2_ent":  { name: "Mavic 2 Enterprise (24mm)",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
     };
 
     let allDroneData = {};
@@ -320,7 +319,7 @@
         }
         document.getElementById('resultArea').style.display = 'none';
         
-        // モード切替時にロック状態も再評価
+        
         updateDrone();
     }
 
@@ -328,30 +327,27 @@
         const key = document.getElementById('droneSelect').value;
         const deleteBtn = document.getElementById('btnDelete');
         
-        // --- 入力ロック機能 ---
+       
         const isManual = (key === 'manual');
         const fovInput = document.getElementById('hfov');
         const distInput = document.getElementById('distance');
 
-        // FOV等は、Manual以外では常にロック（編集不可）
+
         fovInput.disabled = !isManual;
 
-        // 距離入力は、プリセットモードに関係なく、「距離を出すモード」の時はロックされる
-        // （setMode関数で制御しているのでここでは触らないが、背景色の整合性をとる）
         if (!isManual) {
-            fovInput.style.backgroundColor = "#e5e5ea"; // グレーアウト
+            fovInput.style.backgroundColor = "#e5e5ea"; 
         } else {
             fovInput.style.backgroundColor = "#fff";
         }
 
-        // --- カスタム削除ボタン制御 ---
         if (key.startsWith("custom_")) {
             deleteBtn.style.display = "block";
         } else {
             deleteBtn.style.display = "none";
         }
 
-        if (isManual) return; // マニュアルなら値の上書きはしない
+        if (isManual) return; 
 
         const d = allDroneData[key];
         document.getElementById('hfov').value = d.fov;
