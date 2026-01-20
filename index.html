@@ -185,27 +185,27 @@
     <div style="display:flex; gap:10px;">
         <div style="flex:1;">
             <label id="lblDist">距離 (m)</label>
-            <input type="number" id="distance" value="30" step="1" inputmode="decimal">
+            <input type="number" id="distance" value="30" step="1" inputmode="decimal" oninput="hideResult()">
         </div>
         <div style="flex:1;">
             <label id="lblGsd">目標GSD (mm/px)</label>
-            <input type="number" id="target_gsd" value="5.0" step="0.1" inputmode="decimal" disabled>
+            <input type="number" id="target_gsd" value="5.0" step="0.1" inputmode="decimal" disabled oninput="hideResult()">
         </div>
     </div>
     
     <label>水平画角 H-FOV (°)</label>
-    <input type="number" id="hfov" value="73.7" step="0.1" inputmode="decimal">
+    <input type="number" id="hfov" value="73.7" step="0.1" inputmode="decimal" oninput="hideResult()">
 
     <div class="opt-section">
         <div class="opt-title">モーションブラー</div>
         <div style="display:flex; gap:10px;">
             <div style="flex:1;">
                 <label>飛行速度 (m/s)</label>
-                <input type="number" id="speed" placeholder="例: 5" inputmode="decimal">
+                <input type="number" id="speed" placeholder="例: 5" inputmode="decimal" oninput="hideResult()">
             </div>
             <div style="flex:1;">
                 <label>シャッター 1 / X</label>
-                <input type="number" id="shutter" placeholder="例: 1000" inputmode="numeric">
+                <input type="number" id="shutter" placeholder="例: 1000" inputmode="numeric" oninput="hideResult()">
             </div>
         </div>
     </div>
@@ -260,17 +260,11 @@
 </div>
 
 <script>
-    // ==========================================
-    // データセット
-    // 割り算をそのまま記述して厳密な値を保持します
-    // ==========================================
     const defaultData = {
-        // --- ズーム機 ---
         "h20_zoom": { 
             name: "Zenmuse H20 (Zoom Mode)", 
             sw: 6.17, sh: 4.55, pw: 4056, fov: 73,
             baseFocal: 24, 
-            // 実スペック: 31.7mm ～ 556.2mm
             minZoom: 31.7 / 24, 
             maxZoom: 556.2 / 24 
         },
@@ -278,12 +272,9 @@
             name: "Matrice 30/30T (Zoom Mode)", 
             sw: 6.4, sh: 4.8, pw: 8000, fov: 73, 
             baseFocal: 24,
-            // 実スペック: 113mm ～ 405mm
             minZoom: 113 / 24,  
             maxZoom: 405 / 24   
         },
-
-        // --- 固定レンズ ---
         "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
         "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 }, 
         "m4t_tele": { name: "Matrice 4T Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
@@ -396,14 +387,16 @@
             distInput.style.backgroundColor = "#e5e5ea";
             gsdInput.style.backgroundColor = "#fff";
         }
-        document.getElementById('resultArea').style.display = 'none';
+        hideResult();
         
         updateDrone();
     }
 
-    // ==========================================
-    // 🔄 ダブルスライダ連動 & 厳密計算
-    // ==========================================
+    // 入力値が変わったら結果を隠す
+    function hideResult() {
+        document.getElementById('resultArea').style.display = 'none';
+    }
+
     function syncZoom(source) {
         const magSlider = document.getElementById('magSlider');
         const magInput = document.getElementById('magInput');
@@ -417,43 +410,38 @@
         const minMag = parseFloat(magSlider.min);
         const maxMag = parseFloat(magSlider.max);
 
-        // --- 現在の倍率を計算（フル精度） ---
+        // 現在の倍率を計算
         let currentMag = minMag; 
 
         if (source.includes('mag')) {
-            // 倍率側を操作
             let val = parseFloat(source === 'magSlider' ? magSlider.value : magInput.value);
             if (!isNaN(val)) currentMag = val;
         } else {
-            // 焦点距離側を操作
             let val = parseFloat(source === 'focalSlider' ? focalSlider.value : focalInput.value);
             if (!isNaN(val)) currentMag = val / baseFocal;
         }
 
-        // 範囲制限（厳密値でクランプ）
         let clampedMag = currentMag;
         if (clampedMag < minMag) clampedMag = minMag;
         if (clampedMag > maxMag) clampedMag = maxMag;
 
-        // --- UI更新 ---
-        
-        // 1. Slider (厳密な値をセット、step="any"なので端まで届く)
+        // UI更新
         magSlider.value = clampedMag;
-        focalSlider.value = clampedMag * baseFocal;
-
-        // 2. Display (表示は小数第一位で丸める)
         magDisplay.innerText = clampedMag.toFixed(1) + "x";
-        focalDisplay.innerText = (clampedMag * baseFocal).toFixed(1) + "mm";
 
-        // 3. Input Box (入力中は上書きせず、他のコントロール経由の時のみ更新)
+        const clampedFocal = clampedMag * baseFocal;
+        focalSlider.value = clampedFocal; // step="any"なのでそのままセット
+        focalDisplay.innerText = clampedFocal.toFixed(1) + "mm";
+
         if (source !== 'magInput') {
             magInput.value = clampedMag.toFixed(1);
         }
         if (source !== 'focalInput') {
-            focalInput.value = (clampedMag * baseFocal).toFixed(1);
+            focalInput.value = clampedFocal.toFixed(1);
         }
 
-        calculate();
+        // 数値が変わったので結果を隠す
+        hideResult();
     }
 
     function finalizeZoom() {
@@ -487,6 +475,7 @@
 
         if (isManual) {
             zoomArea.style.display = "none";
+            hideResult();
             return;
         }
 
@@ -497,18 +486,15 @@
             document.getElementById('base_focal').value = d.baseFocal || 24;
             const base = d.baseFocal || 24;
             
-            // スライダ設定 (厳密値)
             magSlider.min = d.minZoom;
             magSlider.max = d.maxZoom;
             focalSlider.min = d.minZoom * base;
             focalSlider.max = d.maxZoom * base;
 
-            // 初期化（最小ズーム）
             const startMag = d.minZoom;
             magSlider.value = startMag;
             focalSlider.value = startMag * base;
             
-            // 表示用
             magInput.value = startMag.toFixed(1);
             magDisplay.innerText = startMag.toFixed(1) + "x";
             focalInput.value = (startMag * base).toFixed(1);
@@ -523,7 +509,9 @@
         document.getElementById('sensor_w').value = d.sw;
         document.getElementById('sensor_h').value = d.sh;
         document.getElementById('pixel_w').value = d.pw;
-        calculate();
+        
+        // 機種が変わったので結果を隠す
+        hideResult();
     }
 
     function calculate() {
@@ -537,8 +525,8 @@
         let zoomFactor = 1.0;
         
         if (zoomArea.style.display !== 'none') {
-            // 計算には厳密なスライダの値を使用する
-            zoomFactor = parseFloat(document.getElementById('magSlider').value) || 1.0;
+            const val = parseFloat(document.getElementById('magSlider').value);
+            zoomFactor = isNaN(val) ? 1.0 : val;
         }
 
         let resultVal = 0; 
