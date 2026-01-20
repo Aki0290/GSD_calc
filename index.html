@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GSD Calc</title>
+    <title>GSD Calc Pro</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -38,6 +38,32 @@
         input:disabled { background: #e5e5ea; color: #888; border-color: #eee; cursor: not-allowed; }
         input:focus, select:focus { border-color: #007aff; background: #fff; outline: none; }
         
+        /* スライダのデザイン */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            margin: 10px 0;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 1px solid #d1d1d6;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            margin-top: -12px;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #007aff;
+            border-radius: 2px;
+        }
+
         .opt-section { background: #f9f9f9; padding: 15px; border-radius: 10px; border: 1px solid #eee; margin-bottom: 15px; }
         .opt-title { font-size: 0.9rem; font-weight: bold; color: #555; margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
 
@@ -63,6 +89,14 @@
         .blur-res { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85rem; font-weight: bold; text-align: center; display: none; }
         .blur-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
         .blur-ng { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        /* ズームエリア */
+        .zoom-container { display: none; background: #fffbe6; padding: 15px; border-radius: 10px; border: 1px solid #ffe58f; margin-bottom: 15px; }
+        .zoom-block { margin-bottom: 15px; border-bottom: 1px dashed #eaddb6; padding-bottom: 10px; }
+        .zoom-block:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+        
+        .zoom-header { font-weight: bold; font-size: 0.9rem; color: #b7950b; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center; }
+        .zoom-val-disp { font-size: 1.1rem; color: #333; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -71,8 +105,8 @@
     <h2>GSD計算機</h2>
 
     <div class="mode-switch">
-        <div class="mode-option active" id="modeNormal" onclick="setMode('normal')">GSDを出す<br><small>(距離 → GSD)</small></div>
-        <div class="mode-option" id="modeReverse" onclick="setMode('reverse')">距離を出す<br><small>(GSD → 距離)</small></div>
+        <div class="mode-option active" id="modeNormal" onclick="setMode('normal')">GSD算出<br><small>(距離 → GSD)</small></div>
+        <div class="mode-option" id="modeReverse" onclick="setMode('reverse')">距離算出<br><small>(GSD → 距離)</small></div>
     </div>
 
     <label>機種・レンズを選択</label>
@@ -80,15 +114,16 @@
         <option value="manual">-- 手動入力 (Manual) --</option>
         <optgroup label="ユーザー登録機材" id="userGroup" style="display:none;"></optgroup>
 
+        <optgroup label="ズーム対応機種 (Optical Range)">
+            <option value="h20_zoom">Zenmuse H20 (Zoom Mode)</option>
+            <option value="m30_zoom">Matrice 30/30T (Zoom Mode)</option>
+        </optgroup>
+
         <optgroup label="DJI Zenmuse Payloads">
             <option value="p1_24mm">Zenmuse P1 (24mm)</option>
             <option value="p1_35mm">Zenmuse P1 (35mm)</option>
             <option value="l2_rgb">Zenmuse L2 RGB (24mm eq)</option>
-            <option value="h20_wide">Zenmuse H20 Wide (24mm eq)</option>
-        </optgroup>
-
-        <optgroup label="Phase One">
-            <option value="ixm100_80mm">iXM 100MP (80mm)</option>
+            <option value="h20_wide">Zenmuse H20 (Wide Only)</option>
         </optgroup>
 
         <optgroup label="DJI Matrice 4 Series">
@@ -100,7 +135,10 @@
 
         <optgroup label="DJI Matrice 30 Series">
             <option value="m30_wide">Matrice 30/30T Wide (24mm eq)</option>
-            <option value="m30_zoom">Matrice 30/30T Zoom (～113mm)</option>
+        </optgroup>
+
+        <optgroup label="Phase One">
+            <option value="ixm100_80mm">iXM 100MP (80mm)</option>
         </optgroup>
 
         <optgroup label="DJI Mavic 3 Series">
@@ -118,6 +156,32 @@
     
     <button id="btnDelete" class="btn-delete" onclick="deleteCustomDrone()">このカスタム機材を削除</button>
 
+    <div id="zoomArea" class="zoom-container">
+        <div class="zoom-block">
+            <div class="zoom-header">
+                <span>倍率 (Magnification)</span>
+                <span id="magDisplay" class="zoom-val-disp">1.0x</span>
+            </div>
+            <input type="range" id="magSlider" step="any" oninput="syncZoom('magSlider')">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <input type="number" id="magInput" step="0.1" inputmode="decimal" oninput="syncZoom('magInput')" onchange="finalizeZoom()">
+                <span>倍 (x)</span>
+            </div>
+        </div>
+
+        <div class="zoom-block">
+            <div class="zoom-header">
+                <span>焦点距離 (Focal Length)</span>
+                <span id="focalDisplay" class="zoom-val-disp">24.0mm</span>
+            </div>
+            <input type="range" id="focalSlider" step="any" oninput="syncZoom('focalSlider')">
+            <div style="display:flex; align-items:center; gap:10px;">
+                <input type="number" id="focalInput" step="1" inputmode="decimal" oninput="syncZoom('focalInput')" onchange="finalizeZoom()">
+                <span>mm (35mm判)</span>
+            </div>
+        </div>
+    </div>
+
     <div style="display:flex; gap:10px;">
         <div style="flex:1;">
             <label id="lblDist">距離 (m)</label>
@@ -129,7 +193,7 @@
         </div>
     </div>
     
-    <label>水平画角 H-FOV (°) <small style="font-weight:normal;"></small></label>
+    <label>水平画角 H-FOV (°)</label>
     <input type="number" id="hfov" value="73.7" step="0.1" inputmode="decimal">
 
     <div class="opt-section">
@@ -150,7 +214,7 @@
         <input type="number" id="sensor_w" value="35.9">
         <input type="number" id="sensor_h" value="24.0">
         <input type="number" id="pixel_w" value="8192">
-    </div>
+        <input type="number" id="base_focal" value="24"> </div>
 
     <button onclick="calculate()">計算実行</button>
 
@@ -183,9 +247,11 @@
                     <label>センサー横 (mm)</label>
                     <input type="number" id="new_sw" placeholder="17.3">
                 </div>
-                <div style="flex:1;">
-                    <label>センサー縦 (mm)</label>
-                    <input type="number" id="new_sh" placeholder="13.0">
+                <div style="display:flex; gap:10px;">
+                    <div style="flex:1;">
+                        <label>センサー縦 (mm)</label>
+                        <input type="number" id="new_sh" placeholder="13.0">
+                    </div>
                 </div>
             </div>
             <button class="btn-save" onclick="saveCustomDrone()">この設定を保存</button>
@@ -195,29 +261,42 @@
 
 <script>
     // ==========================================
-    // データセット (名称にミリ数を追記)
+    // データセット
+    // 割り算をそのまま記述して厳密な値を保持します
     // ==========================================
     const defaultData = {
-        "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.7 },
-        "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.4 },
-        
-        "h20_wide": { name: "Zenmuse H20 Wide (24mm)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
-        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        // --- ズーム機 ---
+        "h20_zoom": { 
+            name: "Zenmuse H20 (Zoom Mode)", 
+            sw: 6.17, sh: 4.55, pw: 4056, fov: 73,
+            baseFocal: 24, 
+            // 実スペック: 31.7mm ～ 556.2mm
+            minZoom: 31.7 / 24, 
+            maxZoom: 556.2 / 24 
+        },
+        "m30_zoom": { 
+            name: "Matrice 30/30T (Zoom Mode)", 
+            sw: 6.4, sh: 4.8, pw: 8000, fov: 73, 
+            baseFocal: 24,
+            // 実スペック: 113mm ～ 405mm
+            minZoom: 113 / 24,  
+            maxZoom: 405 / 24   
+        },
 
-        "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 44.0, sh: 33.0, pw: 11664, fov: 30.7 },
-
+        // --- 固定レンズ ---
         "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
-        "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 },
+        "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 }, 
         "m4t_tele": { name: "Matrice 4T Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
         "m4d_wide": { name: "Matrice 4D Wide (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-
         "m30_wide": { name: "Matrice 30/30T Wide (24mm)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
-        "m30_zoom": { name: "Matrice 30/30T Zoom (～113mm)", sw: 6.4, sh: 4.8, pw: 8000, fov: 35 }, 
-
+        "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.7 },
+        "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.4 },
+        "h20_wide": { name: "Zenmuse H20 (Wide Only)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
+        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
+        "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 44.0, sh: 33.0, pw: 11664, fov: 30.7 },
         "m3_classic": { name: "Mavic 3 Classic (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
         "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
         "m3e_wide":   { name: "Mavic 3 Enterprise (24mm)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-
         "m2_pro":  { name: "Mavic 2 Pro (28mm)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
         "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
         "m2_ent":  { name: "Mavic 2 Enterprise (24mm)",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
@@ -319,27 +398,86 @@
         }
         document.getElementById('resultArea').style.display = 'none';
         
-        
         updateDrone();
+    }
+
+    // ==========================================
+    // 🔄 ダブルスライダ連動 & 厳密計算
+    // ==========================================
+    function syncZoom(source) {
+        const magSlider = document.getElementById('magSlider');
+        const magInput = document.getElementById('magInput');
+        const magDisplay = document.getElementById('magDisplay');
+
+        const focalSlider = document.getElementById('focalSlider');
+        const focalInput = document.getElementById('focalInput');
+        const focalDisplay = document.getElementById('focalDisplay');
+
+        const baseFocal = parseFloat(document.getElementById('base_focal').value) || 24;
+        const minMag = parseFloat(magSlider.min);
+        const maxMag = parseFloat(magSlider.max);
+
+        // --- 現在の倍率を計算（フル精度） ---
+        let currentMag = minMag; 
+
+        if (source.includes('mag')) {
+            // 倍率側を操作
+            let val = parseFloat(source === 'magSlider' ? magSlider.value : magInput.value);
+            if (!isNaN(val)) currentMag = val;
+        } else {
+            // 焦点距離側を操作
+            let val = parseFloat(source === 'focalSlider' ? focalSlider.value : focalInput.value);
+            if (!isNaN(val)) currentMag = val / baseFocal;
+        }
+
+        // 範囲制限（厳密値でクランプ）
+        let clampedMag = currentMag;
+        if (clampedMag < minMag) clampedMag = minMag;
+        if (clampedMag > maxMag) clampedMag = maxMag;
+
+        // --- UI更新 ---
+        
+        // 1. Slider (厳密な値をセット、step="any"なので端まで届く)
+        magSlider.value = clampedMag;
+        focalSlider.value = clampedMag * baseFocal;
+
+        // 2. Display (表示は小数第一位で丸める)
+        magDisplay.innerText = clampedMag.toFixed(1) + "x";
+        focalDisplay.innerText = (clampedMag * baseFocal).toFixed(1) + "mm";
+
+        // 3. Input Box (入力中は上書きせず、他のコントロール経由の時のみ更新)
+        if (source !== 'magInput') {
+            magInput.value = clampedMag.toFixed(1);
+        }
+        if (source !== 'focalInput') {
+            focalInput.value = (clampedMag * baseFocal).toFixed(1);
+        }
+
+        calculate();
+    }
+
+    function finalizeZoom() {
+        syncZoom('magSlider'); 
     }
 
     function updateDrone() {
         const key = document.getElementById('droneSelect').value;
         const deleteBtn = document.getElementById('btnDelete');
+        const zoomArea = document.getElementById('zoomArea');
         
-       
+        const magSlider = document.getElementById('magSlider');
+        const magInput = document.getElementById('magInput');
+        const magDisplay = document.getElementById('magDisplay');
+
+        const focalSlider = document.getElementById('focalSlider');
+        const focalInput = document.getElementById('focalInput');
+        const focalDisplay = document.getElementById('focalDisplay');
+        
         const isManual = (key === 'manual');
         const fovInput = document.getElementById('hfov');
-        const distInput = document.getElementById('distance');
-
 
         fovInput.disabled = !isManual;
-
-        if (!isManual) {
-            fovInput.style.backgroundColor = "#e5e5ea"; 
-        } else {
-            fovInput.style.backgroundColor = "#fff";
-        }
+        fovInput.style.backgroundColor = !isManual ? "#e5e5ea" : "#fff";
 
         if (key.startsWith("custom_")) {
             deleteBtn.style.display = "block";
@@ -347,9 +485,40 @@
             deleteBtn.style.display = "none";
         }
 
-        if (isManual) return; 
+        if (isManual) {
+            zoomArea.style.display = "none";
+            return;
+        }
 
         const d = allDroneData[key];
+
+        if (d.maxZoom) {
+            zoomArea.style.display = "block";
+            document.getElementById('base_focal').value = d.baseFocal || 24;
+            const base = d.baseFocal || 24;
+            
+            // スライダ設定 (厳密値)
+            magSlider.min = d.minZoom;
+            magSlider.max = d.maxZoom;
+            focalSlider.min = d.minZoom * base;
+            focalSlider.max = d.maxZoom * base;
+
+            // 初期化（最小ズーム）
+            const startMag = d.minZoom;
+            magSlider.value = startMag;
+            focalSlider.value = startMag * base;
+            
+            // 表示用
+            magInput.value = startMag.toFixed(1);
+            magDisplay.innerText = startMag.toFixed(1) + "x";
+            focalInput.value = (startMag * base).toFixed(1);
+            focalDisplay.innerText = (startMag * base).toFixed(1) + "mm";
+
+        } else {
+            zoomArea.style.display = "none";
+            magInput.value = 1;
+        }
+
         document.getElementById('hfov').value = d.fov;
         document.getElementById('sensor_w').value = d.sw;
         document.getElementById('sensor_h').value = d.sh;
@@ -364,6 +533,14 @@
         const pw = parseFloat(document.getElementById('pixel_w').value);
         const rad = fov * (Math.PI / 180);
 
+        const zoomArea = document.getElementById('zoomArea');
+        let zoomFactor = 1.0;
+        
+        if (zoomArea.style.display !== 'none') {
+            // 計算には厳密なスライダの値を使用する
+            zoomFactor = parseFloat(document.getElementById('magSlider').value) || 1.0;
+        }
+
         let resultVal = 0; 
         let gsdVal = 0;    
         let viewW = 0;
@@ -373,8 +550,10 @@
         if (currentMode === 'normal') {
             const dist = parseFloat(document.getElementById('distance').value);
             if (dist > 0 && fov > 0) {
-                viewW = 2 * dist * Math.tan(rad / 2);
+                const baseViewW = 2 * dist * Math.tan(rad / 2);
+                viewW = baseViewW / zoomFactor;
                 gsdVal = (viewW * 1000) / pw;
+                
                 resultVal = gsdVal;
                 resultLabelText = "GSD";
                 resultUnit = " mm/px";
@@ -383,8 +562,9 @@
         } else {
             const targetGsd = parseFloat(document.getElementById('target_gsd').value);
             if (targetGsd > 0 && fov > 0) {
-                resultVal = (targetGsd * pw) / (2000 * Math.tan(rad / 2));
-                viewW = 2 * resultVal * Math.tan(rad / 2);
+                viewW = (targetGsd * pw) / 1000;
+                resultVal = (viewW * zoomFactor) / (2 * Math.tan(rad / 2));
+                
                 gsdVal = targetGsd; 
                 resultLabelText = "必要な撮影距離";
                 resultUnit = " m";
