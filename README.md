@@ -1,81 +1,68 @@
-# GSD Calculator
+# GSD Calc (Ground Sample Distance Calculator)
 
-ドローン測量・点検業務のための、**画素密度（GSD）** と **モーションブラー** を計算するWebアプリです。
+ドローン測量・空撮のための、地上画素寸法 (GSD) 計算ツールです。
+現場でスマホから手軽に、正確なGSDや必要な飛行高度を計算できます。
 
-**iPhoneやAndroidのホーム画面に追加することで、オフラインでも動くアプリとして利用可能です。**
+<p align="center">
+  <img src="https://img.shields.io/badge/Platform-Web%20%2F%20Android%20%2F%20iOS-blue" alt="Platform">
+  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+</p>
 
-## デモ・使い方
-**[アプリを開く](https://aki0290.github.io/GSD_calc/)**
+## ✨ 特徴 (Features)
 
----
+* **2つの計算モード:**
+    * **GSD算出:** 飛行高度から GSD (精度) を計算
+    * **距離算出:** 目標とする GSD から必要な飛行高度を逆算
+* **豊富なプリセット:** DJI Matrice 30/300/400シリーズ、Mavic 3 Enterprise、Zenmuse L2/P1/H20 など、主要な測量・産業用ドローンのスペックを網羅。
+* **ズームレンズ対応:** Mavic 2 Enterprise や H20/M30 シリーズの光学ズーム使用時の GSD 計算に対応。
+* **モーションブラー計算:** 飛行速度とシャッタースピードから「移動ブレ」を計算し、許容範囲内かどうかを判定。
+* **カスタム機材登録:** 手持ちの機材や新しいレンズを手動で登録・保存可能。
+* **オフライン対応:** PWA (Progressive Web App) 対応により、電波の届かない山間部の現場でもブラウザさえあれば動作可能。
 
-## 主な機能
+## 📱 対応機種リスト (Preset Drones)
 
-1.  **GSD（地上画素寸法）の計算**
-    * 対地高度（距離）から、GSD（何mm/pxか）を算出します。
-2.  **高度の逆算**
-    * 「GSD 5mm以下で撮りたい」といった場合、必要な高度を逆算します。
-3.  **モーションブラー（移動ブレ）判定**
-    * 飛行速度とシャッタースピードを入力すると、写真が何cmブレるかを計算。
-    * GSDと比較し、ブレが許容範囲内か（緑）、画質劣化するか（赤）を自動判定します。
-4.  **プリセット保護機能 (Safe Mode)**
-    * 登録済みの機体を選択中は、FOV（画角）などの数値を誤って書き換えないよう自動ロックされます。
-5.  **カスタム機材登録**
-    * 自分の持っている機材やレンズを登録し、ブラウザに保存できます。
-6.  **PWA対応 (オフライン動作)**
-    * 電波のない山間部や現場でも使用可能です。
+### DJI Matrice 4 Series (Latest)
+* Matrice 4T Wide (24mm)
+* Matrice 4T&D Med (70mm)
+* Matrice 4T&D Tele (168mm)
+* Matrice 4D Wide (24mm)
 
----
+### DJI Mavic 3 Enterprise Series
+* Mavic 3 Enterprise (24mm / 162mm)
+* Mavic 3 / 3 Pro (24mm / 70mm / 166mm)
+* Mavic 3 Classic
 
-## iPhone / Android へのインストール方法
+### DJI Matrice 30 Series
+* Matrice 30/30T (Zoom Mode / Wide)
 
-このツールは **PWA (Progressive Web App)** に対応しています。アプリストアを経由せず、以下の手順でインストールできます。
+### DJI Zenmuse Payloads
+* Zenmuse L2 RGB
+* Zenmuse H20 (Zoom / Wide)
+* Zenmuse P1 (35mm / 24mm)
 
-### iPhone (iOS) の場合
-1.  Safariで[アプリのURL](https://aki0290.github.io/GSD_calc/)を開く。
-2.  画面下部の **「共有ボタン（四角から矢印）」** をタップ。
-3.  メニューをスクロールし、**「ホーム画面に追加」** を選択。
-4.  右上の **「追加」** をタップ。
-5.  ホーム画面にアイコンが追加され、全画面アプリとして起動します。
+### Others
+* Phase One iXM 100MP
+* Mavic 2 Enterprise / Zoom / Pro (Legacy)
 
----
+## 🚀 使い方 (Usage)
 
-## 対応機種・プリセット
+1.  **ブラウザで開く:** アプリのURLにアクセスします。
+2.  **機材を選択:** リストから使用するドローン・カメラを選択します。（または手動入力）
+3.  **計算モード選択:**
+    * 「GSD算出」: 飛行予定の高度を入力。
+    * 「距離算出」: 欲しい精度 (例: 5.0 mm/px) を入力。
+4.  **結果確認:** リアルタイムで GSD、撮影範囲、モーションブラー判定が表示されます。
 
-**DJI Enterprise / Zenmuse**
-* Zenmuse P1 (24mm / 35mm)
-* Zenmuse L2 (RGB)
-* Zenmuse H20
-* Matrice 4T / 4D / 30T / 300 RTK
+## 🛠️ 開発・ビルド (Development)
 
-**DJI Mavic Series**
-* Mavic 3 Enterprise (Wide)
-* Mavic 3 / 3 Pro / Classic
-* Mavic 2 Pro / Zoom / Enterprise
+このプロジェクトは HTML/JS ベースで作成されており、Capacitor を使用して Android/iOS アプリ化されています。
 
-**Phase One**
-* iXM 100MP (80mm)
+### 必要要件
+* Node.js
+* Capacitor
+* Android Studio (Androidビルド用)
 
-> ※ リストにない機材も「手動入力」または「カスタム登録」で利用可能です。
-
----
-
-## 開発・カスタマイズ
-
-このアプリは単一の HTML ファイル (`index.html`) で動作しています。特別なビルド環境は不要です。
-
-### 新しい機材をコードに追加する場合
-`index.html` 内の `defaultData` オブジェクトを編集してください。
-
-```javascript
-const defaultData = {
-    // 新しいドローンの追加
-    "my_new_drone": { 
-        name: "My New Drone (24mm)", 
-        sw: 17.3,  // センサー横幅(mm)
-        sh: 13.0,  // センサー縦幅(mm)
-        pw: 5280,  // 横画素数(px)
-        fov: 84    // 水平画角(deg)
-    },
-    // ...
-};
+### セットアップ
+```bash
+# 依存関係のインストール
+npm install
