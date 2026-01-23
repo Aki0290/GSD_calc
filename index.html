@@ -19,7 +19,7 @@
             color: #1c1c1e; 
             -webkit-tap-highlight-color: transparent; 
         }
-        .container { max-width: 100%; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         h2 { text-align: center; margin: 0 0 15px 0; font-size: 1.2rem; color: #1c1c1e; }
         
         .mode-switch { display: flex; background: #e5e5ea; border-radius: 10px; padding: 4px; margin-bottom: 20px; }
@@ -102,7 +102,7 @@
 <body>
 
 <div class="container">
-    <h2>GSD計算機</h2>
+    <h2>GSD計算機 Pro</h2>
 
     <div class="mode-switch">
         <div class="mode-option active" id="modeNormal" onclick="setMode('normal')">GSD算出<br><small>(距離 → GSD)</small></div>
@@ -115,6 +115,7 @@
         <optgroup label="ユーザー登録機材" id="userGroup" style="display:none;"></optgroup>
 
         <optgroup label="ズーム対応機種 (Optical Range)">
+            <option value="m2_ent">Mavic 2 Enterprise (Zoom Mode)</option>
             <option value="h20_zoom">Zenmuse H20 (Zoom Mode)</option>
             <option value="m30_zoom">Matrice 30/30T (Zoom Mode)</option>
         </optgroup>
@@ -150,7 +151,6 @@
         <optgroup label="DJI Mavic 2 Series">
             <option value="m2_pro">Mavic 2 Pro (28mm eq)</option>
             <option value="m2_zoom">Mavic 2 Zoom (24mm eq)</option>
-            <option value="m2_ent">Mavic 2 Enterprise (24mm eq)</option>
         </optgroup>
     </select>
     
@@ -261,6 +261,14 @@
 
 <script>
     const defaultData = {
+        // --- ズーム対応機種 ---
+        "m2_ent": { 
+            name: "Mavic 2 Enterprise (Zoom Mode)", 
+            sw: 6.17, sh: 4.55, pw: 4000, fov: 82.6, // Spec FOV: 82.6(24mm)
+            baseFocal: 24,
+            minZoom: 1.0,  // 24mm
+            maxZoom: 2.0   // 48mm
+        },
         "h20_zoom": { 
             name: "Zenmuse H20 (Zoom Mode)", 
             sw: 6.17, sh: 4.55, pw: 4056, fov: 73,
@@ -275,6 +283,8 @@
             minZoom: 113 / 24,  
             maxZoom: 405 / 24   
         },
+
+        // --- 単焦点機種 ---
         "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
         "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 }, 
         "m4t_tele": { name: "Matrice 4T Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
@@ -289,8 +299,7 @@
         "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
         "m3e_wide":   { name: "Mavic 3 Enterprise (24mm)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
         "m2_pro":  { name: "Mavic 2 Pro (28mm)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
-        "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 73 },
-        "m2_ent":  { name: "Mavic 2 Enterprise (24mm)",  sw: 6.17, sh: 4.55, pw: 4000, fov: 73 }
+        "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 82.6 }
     };
 
     let allDroneData = {};
