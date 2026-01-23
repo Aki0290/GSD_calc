@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>GSD Calc Pro</title>
+    <title>GSD Calc</title>
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -102,7 +102,7 @@
 <body>
 
 <div class="container">
-    <h2>GSD計算機 Pro</h2>
+    <h2>GSD計算機</h2>
 
     <div class="mode-switch">
         <div class="mode-option active" id="modeNormal" onclick="setMode('normal')">GSD算出<br><small>(距離 → GSD)</small></div>
@@ -114,43 +114,43 @@
         <option value="manual">-- 手動入力 (Manual) --</option>
         <optgroup label="ユーザー登録機材" id="userGroup" style="display:none;"></optgroup>
 
-        <optgroup label="ズーム対応機種 (Optical Range)">
-            <option value="m2_ent">Mavic 2 Enterprise (Zoom Mode)</option>
-            <option value="h20_zoom">Zenmuse H20 (Zoom Mode)</option>
-            <option value="m30_zoom">Matrice 30/30T (Zoom Mode)</option>
+        <optgroup label="DJI Matrice 4 Series (Latest)">
+            <option value="m4t_wide">Matrice 4T Wide (24mm)</option>
+            <option value="m4t&d_med">Matrice 4T&D Med (70mm)</option>
+            <option value="m4t&d_tele">Matrice 4T&D Tele (168mm)</option>
+            <option value="m4d_wide">Matrice 4D Wide (24mm)</option>
         </optgroup>
 
-        <optgroup label="DJI Zenmuse Payloads">
-            <option value="p1_24mm">Zenmuse P1 (24mm)</option>
-            <option value="p1_35mm">Zenmuse P1 (35mm)</option>
-            <option value="l2_rgb">Zenmuse L2 RGB (24mm eq)</option>
-            <option value="h20_wide">Zenmuse H20 (Wide Only)</option>
-        </optgroup>
-
-        <optgroup label="DJI Matrice 4 Series">
-            <option value="m4t_wide">Matrice 4T Wide (24mm eq)</option>
-            <option value="m4t_med">Matrice 4T Med (70mm eq)</option>
-            <option value="m4t_tele">Matrice 4T Tele (168mm eq)</option>
-            <option value="m4d_wide">Matrice 4D Wide (24mm eq)</option>
+        <optgroup label="DJI Mavic 3 Enterprise Series">
+            <option value="m3e_wide">Mavic 3 Enterprise (24mm)</option>
+            <option value="m3e_tele">Mavic 3 Enterprise (162mm)</option>
+            <option value="m3_pro_wide">Mavic 3 / 3 Pro (24mm)</option>
+            <option value="m3_pro_Mid">Mavic 3 / 3 Pro (70mm)</option>
+            <option value="m3_pro_tele">Mavic 3 / 3 Pro (166mm)</option>
+            <option value="m3_classic">Mavic 3 Classic (24mm)</option>
         </optgroup>
 
         <optgroup label="DJI Matrice 30 Series">
-            <option value="m30_wide">Matrice 30/30T Wide (24mm eq)</option>
+            <option value="m30_zoom">Matrice 30/30T (Zoom Mode)</option>
+            <option value="m30_wide">Matrice 30/30T Wide (24mm)</option>
+        </optgroup>
+
+        <optgroup label="DJI Zenmuse Payloads">
+            <option value="l2_rgb">Zenmuse L2 RGB (24mm)</option>
+            <option value="h20_zoom">Zenmuse H20 (Zoom Mode)</option>
+            <option value="h20_24mm">Zenmuse H20 (24mm)</option>
+            <option value="p1_35mm">Zenmuse P1 (35mm)</option>
+            <option value="p1_24mm">Zenmuse P1 (24mm)</option>
         </optgroup>
 
         <optgroup label="Phase One">
             <option value="ixm100_80mm">iXM 100MP (80mm)</option>
         </optgroup>
 
-        <optgroup label="DJI Mavic 3 Series">
-            <option value="m3_classic">Mavic 3 Classic (24mm eq)</option>
-            <option value="m3_pro">Mavic 3 / 3 Pro (24mm eq)</option>
-            <option value="m3e_wide">Mavic 3 Enterprise (24mm eq)</option>
-        </optgroup>
-
-        <optgroup label="DJI Mavic 2 Series">
-            <option value="m2_pro">Mavic 2 Pro (28mm eq)</option>
-            <option value="m2_zoom">Mavic 2 Zoom (24mm eq)</option>
+        <optgroup label="DJI Mavic 2 Series (Legacy)">
+            <option value="m2_ent">Mavic 2 Enterprise (Zoom Mode)</option>
+            <option value="m2_zoom">Mavic 2 Zoom (Zoom Mode)</option>
+            <option value="m2_pro">Mavic 2 Pro (28mm)</option>
         </optgroup>
     </select>
     
@@ -261,45 +261,58 @@
 
 <script>
     const defaultData = {
-        // --- ズーム対応機種 ---
-        "m2_ent": { 
-            name: "Mavic 2 Enterprise (Zoom Mode)", 
-            sw: 6.17, sh: 4.55, pw: 4000, fov: 82.6, // Spec FOV: 82.6(24mm)
-            baseFocal: 24,
-            minZoom: 1.0,  // 24mm
-            maxZoom: 2.0   // 48mm
-        },
-        "h20_zoom": { 
-            name: "Zenmuse H20 (Zoom Mode)", 
-            sw: 6.17, sh: 4.55, pw: 4056, fov: 73,
-            baseFocal: 24, 
-            minZoom: 31.7 / 24, 
-            maxZoom: 556.2 / 24 
-        },
+        // --- Matrice 4 Series (Latest) ---
+        "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 69.6 },
+        "m4t&d_med":  { name: "Matrice 4T&D Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 28.3 }, 
+        "m4t&d_tele": { name: "Matrice 4T&D Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 12.0 },
+        "m4d_wide": { name: "Matrice 4D Wide (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 71.5 },
+
+        // --- Mavic 3 Series ---
+        "m3e_wide":   { name: "Mavic 3 Enterprise (24mm)",sw: 17.3, sh: 13.0, pw: 5280, fov: 71.5 },
+        "m3e_tele":   { name: "Mavic 3 Enterprise (162mm)",sw: 6.4, sh: 4.8, pw: 4000, fov: 12.0 },
+        "m3_pro_wide":   { name: "Mavic 3 / 3 Pro (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 71.5 },
+        "m3_pro_Mid":   { name: "Mavic 3 / 3 Pro (70mm)", sw: 9.6, sh: 7.2, pw: 5280, fov: 38.3 },
+        "m3_pro_tele":   { name: "Mavic 3 / 3 Pro (166mm)", sw: 6.4, sh: 4.8, pw: 5280, fov: 12.0 },
+        "m3_classic_wide":   { name: "Mavic 3 Classic (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 71.5 },
+
+        // --- Matrice 30 Series ---
         "m30_zoom": { 
             name: "Matrice 30/30T (Zoom Mode)", 
-            sw: 6.4, sh: 4.8, pw: 8000, fov: 73, 
+            sw: 6.4, sh: 4.8, pw: 8000, fov: 71.5, 
             baseFocal: 24,
             minZoom: 113 / 24,  
             maxZoom: 405 / 24   
         },
+        "m30_wide": { name: "Matrice 30/30T Wide (24mm)", sw: 6.4, sh: 4.8, pw: 4000, fov: 71.5 },
 
-        // --- 単焦点機種 ---
-        "m4t_wide": { name: "Matrice 4T Wide (24mm)", sw: 9.6, sh: 7.2, pw: 8064, fov: 73 },
-        "m4t_med":  { name: "Matrice 4T Med (70mm)",  sw: 9.6, sh: 7.2, pw: 8064, fov: 35 }, 
-        "m4t_tele": { name: "Matrice 4T Tele (168mm)", sw: 8.8, sh: 6.6, pw: 8064, fov: 15 },
-        "m4d_wide": { name: "Matrice 4D Wide (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m30_wide": { name: "Matrice 30/30T Wide (24mm)", sw: 6.4, sh: 4.8, pw: 4000, fov: 73 },
-        "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.7 },
-        "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.4 },
-        "h20_wide": { name: "Zenmuse H20 (Wide Only)", sw: 6.17, sh: 4.55, pw: 4056, fov: 73 }, 
-        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 44.0, sh: 33.0, pw: 11664, fov: 30.7 },
-        "m3_classic": { name: "Mavic 3 Classic (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3_pro":     { name: "Mavic 3 / 3 Pro (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m3e_wide":   { name: "Mavic 3 Enterprise (24mm)",sw: 17.3, sh: 13.0, pw: 5280, fov: 73.7 },
-        "m2_pro":  { name: "Mavic 2 Pro (28mm)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }, 
-        "m2_zoom": { name: "Mavic 2 Zoom (24mm)", sw: 6.17, sh: 4.55, pw: 4000, fov: 82.6 }
+        // --- Zenmuse / Payloads ---
+        "l2_rgb":   { name: "Zenmuse L2 RGB (24mm)", sw: 17.3, sh: 13.0, pw: 5280, fov: 71.5 },
+        "h20_zoom": { 
+            name: "Zenmuse H20 (Zoom Mode)", 
+            sw: 7.6, sh: 5.7, pw: 5184, fov: 70.4,
+            baseFocal: 24, 
+            minZoom: 31.7 / 24, 
+            maxZoom: 556.2 / 24 
+        },
+        "h20_24mm": { name: "Zenmuse H20 (24mm)", sw: 6.17, sh: 4.55, pw: 4056, fov: 70.4 }, 
+        "p1_35mm": { name: "Zenmuse P1 (35mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 54.3 },
+        "p1_24mm": { name: "Zenmuse P1 (24mm)", sw: 35.9, sh: 24.0, pw: 8192, fov: 73.6 },
+        
+        // --- Others ---
+        "ixm100_80mm": { name: "iXM 100MP (80mm)", sw: 43.9, sh: 32.9, pw: 11664, fov: 30.7 },
+
+        // --- Mavic 2 Series (Legacy) ---
+        "m2_ent": { 
+            name: "Mavic 2 Enterprise (Zoom Mode)", 
+            sw: 6.17, sh: 4.55, pw: 4000, fov: 73.7, 
+            baseFocal: 24, minZoom: 1.0, maxZoom: 2.0
+        },
+        "m2_zoom": { 
+            name: "Mavic 2 Zoom (Zoom Mode)", 
+            sw: 6.17, sh: 4.55, pw: 4000, fov: 73.7,
+            baseFocal: 24, minZoom: 1.0, maxZoom: 2.0 
+        },
+        "m2_pro":  { name: "Mavic 2 Pro (28mm)",  sw: 13.2, sh: 8.8, pw: 5472, fov: 65 }
     };
 
     let allDroneData = {};
