@@ -2,7 +2,8 @@
 
 ドローン測量・空撮のための、地上画素寸法 (GSD) 計算ツールです。
 現場でスマホから手軽に、正確なGSDや必要な飛行高度を計算できます。
-[ページ](https://aki0290.github.io/GSD_calc/)
+
+[サイト](https://aki0290.github.io/GSD_calc/)
 
 ## 特徴 (Features)
 
