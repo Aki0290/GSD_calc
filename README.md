@@ -1,22 +1,37 @@
+<div align="center">
+
 # GSD Calc (Ground Sample Distance Calculator)
 
-ドローン測量・空撮のための、地上画素寸法 (GSD) 計算ツールです。
+ドローン測量・空撮のための、地上画素寸法 (GSD) 計算ツールです。<br>
 現場でスマホから手軽に、正確なGSDや必要な飛行高度を計算できます。
 
-[サイト](https://aki0290.github.io/GSD_calc/)
+[![Open App](https://img.shields.io/badge/Open_App-Launch_Site-2ea44f?style=for-the-badge&logo=google-chrome)](https://aki0290.github.io/GSD_calc/)
+<br><br>
+
+</div>
 
 ## 特徴 (Features)
 
-* **2つの計算モード:**
+* **2つの計算モード**
     * **GSD算出:** 飛行高度から GSD (精度) を計算
     * **距離算出:** 目標とする GSD から必要な飛行高度を逆算
-* **豊富なプリセット:** DJI Matrice 30/300/400シリーズ、Mavic 3 Enterprise、Zenmuse L2/P1/H20 など、主要な測量・産業用ドローンのスペックを網羅。
-* **ズームレンズ対応:** Mavic 2 Enterprise や H20/M30 シリーズの光学ズーム使用時の GSD 計算に対応。
-* **モーションブラー計算:** 飛行速度とシャッタースピードから「移動ブレ」を計算し、許容範囲内かどうかを判定。
-* **カスタム機材登録:** 手持ちの機材や新しいレンズを手動で登録・保存可能。
-* **オフライン対応:** PWA (Progressive Web App) 対応により、電波の届かない山間部の現場でもブラウザさえあれば動作可能。
+* **豊富なプリセット**
+    * DJI Matrice 30/300/400シリーズ、Mavic 3 Enterprise、Zenmuse L2/P1/H20 など、主要な測量・産業用ドローンのスペックを網羅。
+* **ズームレンズへの対応**
+    * Mavic 2 Enterprise や H20/M30 シリーズの光学ズーム使用時の GSD 計算に対応。
+* **モーションブラー計算**
+    * 飛行速度とシャッタースピードから「移動ブレ」を計算し、許容範囲内かどうかを判定。
+* **カスタム機材登録**
+    * 手持ちの機材や新しいレンズを手動で登録・保存可能。
+* **オフライン対応**
+    * 電波の届かない山間部の現場でもブラウザさえあれば動作可能。
+
+---
 
 ## 対応機種リスト (Preset Drones)
+
+<details>
+<summary><strong>クリックしてリストを表示 / Hide List</strong></summary>
 
 ### DJI Matrice 4 Series (Latest)
 * Matrice 4T Wide (24mm)
@@ -41,22 +56,31 @@
 * Phase One iXM 100MP
 * Mavic 2 Enterprise / Zoom / Pro (Legacy)
 
+</details>
+
+---
+
 ## 使い方 (Usage)
 
-1.  **ブラウザで開く:** アプリのURLにアクセスします。
+### 1. ブラウザで開く
+アプリのURLにアクセスします。
 
+<div align="center">
+  <img src="images/screenshots_01.png" width="600" alt="アプリの画面1">
+</div>
 
-![アプリの画面](images/screenshots_01.png)
+### 2. 機材を選択
+リストから使用するドローン・カメラを選択します。（または手動入力）
 
-2.  **機材を選択:** リストから使用するドローン・カメラを選択します。（または手動入力）
+<div align="center">
+  <img src="images/screenshots_02.png" width="600" alt="アプリの画面2">
+</div>
 
+### 3. 計算モード選択 & 結果確認
+* **「GSD算出」:** 飛行予定の高度を入力。
+* **「距離算出」:** 欲しい精度 (例: 5.0 mm/px) を入力。
+* 結果として、GSD、撮影範囲、モーションブラー判定が表示されます。
 
-![アプリの画面](images/screenshots_02.png)
-3.  **計算モード選択:**
-    * 「GSD算出」: 飛行予定の高度を入力。
-    * 「距離算出」: 欲しい精度 (例: 5.0 mm/px) を入力。
-4.  **結果確認:** GSD、撮影範囲、モーションブラー判定が表示されます。
-
-
-![アプリの画面](images/screenshots_03.png)
-
+<div align="center">
+  <img src="images/screenshots_03.png" width="600" alt="アプリの画面3">
+</div>
