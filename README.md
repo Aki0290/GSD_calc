@@ -3,10 +3,6 @@
 ドローン測量・空撮のための、地上画素寸法 (GSD) 計算ツールです。
 現場でスマホから手軽に、正確なGSDや必要な飛行高度を計算できます。
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Platform-Web%20%2F%20Android%20%2F%20iOS-blue" alt="Platform">
-</p>
-
 ## 特徴 (Features)
 
 * **2つの計算モード:**
@@ -50,18 +46,5 @@
 3.  **計算モード選択:**
     * 「GSD算出」: 飛行予定の高度を入力。
     * 「距離算出」: 欲しい精度 (例: 5.0 mm/px) を入力。
-4.  **結果確認:** リアルタイムで GSD、撮影範囲、モーションブラー判定が表示されます。
+4.  **結果確認:** GSD、撮影範囲、モーションブラー判定が表示されます。
 
-## 開発・ビルド (Development)
-
-このプロジェクトは HTML/JS ベースで作成されており、Capacitor を使用して Android/iOS アプリ化されています。
-
-### 必要要件
-* Node.js
-* Capacitor
-* Android Studio (Androidビルド用)
-
-### セットアップ
-```bash
-# 依存関係のインストール
-npm install
